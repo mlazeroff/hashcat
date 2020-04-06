@@ -31,7 +31,6 @@ sub module_generate_hash
 
     my $key = $kdf->PBKDF2 ($salt, $word);
     my $key_b64 = encode_base64 ($key, "");
-    printf ("PBKDF2: %s\n", $kdf->PBKDF2_hex ($salt, $word));
 
     # HMAC-SHA1(PBKDF2, "Client Key")
     my $hmac = Digest::HMAC->new
@@ -48,7 +47,6 @@ sub module_generate_hash
         "Digest::SHA1"
     );
     $hmac->add("Client Key");
-    printf("HMAC:   %s\n", $hmac->hexdigest);
 
     # SHA1(HMAC-SHA1(PBDKF2))
     my $sha = Digest::SHA1->new;
@@ -58,7 +56,6 @@ sub module_generate_hash
     $sha = Digest::SHA1->new;
     $sha->add($hmac_key);
     my $hex_key = $sha->hexdigest;
-    printf("SHA1:   %s\n\n", $hex_key);
 
     $key_b64 = encode_base64($sha_key, "");
 
