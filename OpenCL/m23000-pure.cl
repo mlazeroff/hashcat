@@ -246,12 +246,6 @@ KERNEL_FQ void m23000_comp (KERN_ATTR_TMPS_ESALT (pbkdf2_sha1_tmp_t, pbkdf2_sha1
   o[3] = tmps[gid].out[3];
   o[4] = tmps[gid].out[4];
 
-  printf("%08x", o[0]);
-  printf("%08x", o[1]);
-  printf("%08x", o[2]);
-  printf("%08x", o[3]);
-  printf("%08x\n", o[4]);
-
   // HMAC
   sha1_hmac_ctx_t hmac_ctx;
 
@@ -272,12 +266,6 @@ KERNEL_FQ void m23000_comp (KERN_ATTR_TMPS_ESALT (pbkdf2_sha1_tmp_t, pbkdf2_sha1
   o[3] = hmac_ctx.opad.h[3];
   o[4] = hmac_ctx.opad.h[4];
 
-  printf("%08x", o[0]);
-  printf("%08x", o[1]);
-  printf("%08x", o[2]);
-  printf("%08x", o[3]);
-  printf("%08x\n", o[4]);
-
   // SHA1
 
   sha1_ctx_t sha_ctx;
@@ -287,12 +275,6 @@ KERNEL_FQ void m23000_comp (KERN_ATTR_TMPS_ESALT (pbkdf2_sha1_tmp_t, pbkdf2_sha1
   sha1_update (&sha_ctx, o, 20);
 
   sha1_final (&sha_ctx);
-
-  printf("%08x", sha_ctx.h[0]);
-  printf("%08x", sha_ctx.h[1]);
-  printf("%08x", sha_ctx.h[2]);
-  printf("%08x", sha_ctx.h[3]);
-  printf("%08x\n", sha_ctx.h[4]);
 
   const u32 r0 = sha_ctx.h[DGST_R0];
   const u32 r1 = sha_ctx.h[DGST_R1];
