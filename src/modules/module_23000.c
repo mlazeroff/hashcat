@@ -59,8 +59,6 @@ typedef struct pbkdf2_sha1
 
 } pbkdf2_sha1_t;
 
-static const char *SIGNATURE_PBKDF2_SHA1 = "sha1";
-
 u64 module_esalt_size (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSED const user_options_t *user_options, MAYBE_UNUSED const user_options_extra_t *user_options_extra)
 {
   const u64 esalt_size = (const u64) sizeof (pbkdf2_sha1_t);
