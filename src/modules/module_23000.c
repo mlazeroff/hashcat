@@ -17,8 +17,8 @@ static const u32   DGST_POS2      = 2;
 static const u32   DGST_POS3      = 3;
 static const u32   DGST_SIZE      = DGST_SIZE_4_32;
 static const u32   HASH_CATEGORY  = HASH_CATEGORY_GENERIC_KDF;
-static const char *HASH_NAME      = "PBKDF2-HMAC-SHA1";
-static const u64   KERN_TYPE      = 12000;
+static const char *HASH_NAME      = "SCRAM-SHA1";
+static const u64   KERN_TYPE      = 23000;
 static const u32   OPTI_TYPE      = OPTI_TYPE_ZERO_BYTE
                                   | OPTI_TYPE_SLOW_HASH_SIMD_LOOP;
 static const u64   OPTS_TYPE      = OPTS_TYPE_PT_GENERATE_LE
@@ -26,7 +26,7 @@ static const u64   OPTS_TYPE      = OPTS_TYPE_PT_GENERATE_LE
                                   | OPTS_TYPE_HASH_COPY;
 static const u32   SALT_TYPE      = SALT_TYPE_EMBEDDED;
 static const char *ST_PASS        = "hashcat";
-static const char *ST_HASH        = "sha1:1000:MTYwNTM4MDU4Mzc4MzA=:aGghFQBtQ8+WVlMk5GEaMw==";
+static const char *ST_HASH        = "1000:mus49qhIXuru5ssoctsoUQ==:BD8wQax7ahq0sA8pnRwn7FQY/uc=";
 
 u32         module_attack_exec    (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSED const user_options_t *user_options, MAYBE_UNUSED const user_options_extra_t *user_options_extra) { return ATTACK_EXEC;     }
 u32         module_dgst_pos0      (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSED const user_options_t *user_options, MAYBE_UNUSED const user_options_extra_t *user_options_extra) { return DGST_POS0;       }
@@ -93,33 +93,24 @@ int module_hash_decode (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSE
 
   token_t token;
 
-  token.token_cnt  = 4;
-
-  token.signatures_cnt    = 1;
-  token.signatures_buf[0] = SIGNATURE_PBKDF2_SHA1;
+  token.token_cnt  = 3;
 
   token.sep[0]     = ':';
-  token.len_min[0] = 4;
-  token.len_max[0] = 4;
+  token.len_min[0] = 1;
+  token.len_max[0] = 6;
   token.attr[0]    = TOKEN_ATTR_VERIFY_LENGTH
-                   | TOKEN_ATTR_VERIFY_SIGNATURE;
-
-  token.sep[1]     = ':';
-  token.len_min[1] = 1;
-  token.len_max[1] = 6;
-  token.attr[1]    = TOKEN_ATTR_VERIFY_LENGTH
                    | TOKEN_ATTR_VERIFY_DIGIT;
 
-  token.sep[2]     = ':';
-  token.len_min[2] = ((SALT_MIN * 8) / 6) + 0;
-  token.len_max[2] = ((SALT_MAX * 8) / 6) + 3;
-  token.attr[2]    = TOKEN_ATTR_VERIFY_LENGTH
+  token.sep[1]     = ':';
+  token.len_min[1] = ((SALT_MIN * 8) / 6) + 0;
+  token.len_max[1] = ((SALT_MAX * 8) / 6) + 3;
+  token.attr[1]    = TOKEN_ATTR_VERIFY_LENGTH
                    | TOKEN_ATTR_VERIFY_BASE64A;
 
-  token.sep[3]     = ':';
-  token.len_min[3] = 16;
-  token.len_max[3] = 256;
-  token.attr[3]    = TOKEN_ATTR_VERIFY_LENGTH
+  token.sep[2]     = ':';
+  token.len_min[2] = 16;
+  token.len_max[2] = 256;
+  token.attr[2]    = TOKEN_ATTR_VERIFY_LENGTH
                    | TOKEN_ATTR_VERIFY_BASE64A;
 
   const int rc_tokenizer = input_tokenizer ((const u8 *) line_buf, line_len, &token);
@@ -131,7 +122,7 @@ int module_hash_decode (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSE
 
   // iter
 
-  const u8 *iter_pos = token.buf[1];
+  const u8 *iter_pos = token.buf[0];
 
   const u32 iter = hc_strtoul ((const char *) iter_pos, NULL, 10);
 
@@ -139,8 +130,8 @@ int module_hash_decode (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSE
 
   // salt
 
-  const u8 *salt_pos = token.buf[2];
-  const int salt_len = token.len[2];
+  const u8 *salt_pos = token.buf[1];
+  const int salt_len = token.len[1];
 
   memset (tmp_buf, 0, sizeof (tmp_buf));
 
@@ -160,8 +151,8 @@ int module_hash_decode (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSE
 
   // hash
 
-  const u8 *hash_pos = token.buf[3];
-  const int hash_len = token.len[3];
+  const u8 *hash_pos = token.buf[2];
+  const int hash_len = token.len[2];
 
   memset (tmp_buf, 0, sizeof (tmp_buf));
 
