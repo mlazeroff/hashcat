@@ -7,7 +7,7 @@
            |_____|     /___________/     |_____|  /_____/        /_______|
                  :                             :                         :
 
-hashcat v5.1.0
+hashcat v6.0.0
 ==============
 
 AMD GPUs on Linux require "RadeonOpenCompute (ROCm)" Software Platform (3.1 or later)
@@ -24,7 +24,7 @@ NVIDIA GPUs require "NVIDIA Driver" (440.64 or later) and "CUDA Toolkit" (9.0 or
 - Free
 - Open-Source (MIT License)
 - Multi-OS (Linux, Windows and macOS)
-- Multi-Platform (CPU, GPU, DSP, FPGA, etc., everything that comes with an OpenCL runtime)
+- Multi-Platform (CPU, GPU, APU, etc., everything that comes with an OpenCL runtime)
 - Multi-Hash (Cracking multiple hashes at the same time)
 - Multi-Devices (Utilizing multiple devices in same system)
 - Multi-Device-Types (Utilizing mixed device types in same system)
@@ -159,9 +159,11 @@ NVIDIA GPUs require "NVIDIA Driver" (440.64 or later) and "CUDA Toolkit" (9.0 or
 - NetNTLMv1 / NetNTLMv1+ESS
 - NetNTLMv2
 - Skype
-- Telegram client app passcode (SHA256)
+- Telegram Desktop App Passcode (PBKDF2-HMAC-SHA1)
+- Telegram Mobile App Passcode (SHA256)
 - PostgreSQL CRAM (MD5)
 - MySQL CRAM (SHA1)
+- XMPP SCRAM
 - RACF
 - AIX {smd5}
 - AIX {ssha1}
@@ -268,6 +270,7 @@ NVIDIA GPUs require "NVIDIA Driver" (440.64 or later) and "CUDA Toolkit" (9.0 or
 - MS Office <= 2003 $3, SHA1 + RC4, collider #2
 - Open Document Format (ODF) 1.2 (SHA-256, AES)
 - Open Document Format (ODF) 1.1 (SHA-1, Blowfish)
+- Apple Keychain
 - Apple Secure Notes
 - JKS Java Key Store Private Keys (SHA1)
 - 1Password, agilekeychain
@@ -285,6 +288,7 @@ NVIDIA GPUs require "NVIDIA Driver" (440.64 or later) and "CUDA Toolkit" (9.0 or
 - Ethereum Wallet, PBKDF2-HMAC-SHA256
 - Ethereum Wallet, SCRYPT
 - MultiBit Classic .key (MD5)
+- MultiBit HD (scrypt)
 - 7-Zip
 - RAR3-hp
 - RAR5
@@ -295,6 +299,9 @@ NVIDIA GPUs require "NVIDIA Driver" (440.64 or later) and "CUDA Toolkit" (9.0 or
 - PKZIP (Uncompressed)
 - PKZIP Master Key
 - PKZIP Master Key (6 byte optimization)
+- SecureZIP AES-128
+- SecureZIP AES-192
+- SecureZIP AES-256
 - iTunes backup < 10.0
 - iTunes backup >= 10.0
 - WinZip
@@ -341,6 +348,8 @@ NVIDIA GPUs require "NVIDIA Driver" (440.64 or later) and "CUDA Toolkit" (9.0 or
 - Apple
 - Intel
 - NVidia
+- POCL
+- ROCm
 
 ##
 ## Supported OpenCL device types

@@ -707,7 +707,7 @@ static int outer_loop (hashcat_ctx_t *hashcat_ctx)
    * create self-test threads
    */
 
-  if ((user_options->self_test_disable == false) && (hashconfig->st_hash != NULL) && (hashconfig->st_pass != NULL))
+  if ((hashconfig->opts_type & OPTS_TYPE_SELF_TEST_DISABLE) == 0)
   {
     EVENT (EVENT_SELFTEST_STARTING);
 
@@ -1214,7 +1214,7 @@ int hashcat_session_execute (hashcat_ctx_t *hashcat_ctx)
 
   logfile_top_msg ("STOP");
 
-  // free memory
+  // set final status code
 
   if (rc_final == 0)
   {
@@ -1225,6 +1225,16 @@ int hashcat_session_execute (hashcat_ctx_t *hashcat_ctx)
     if (status_ctx->devices_status == STATUS_EXHAUSTED)           rc_final =  1;
     if (status_ctx->devices_status == STATUS_CRACKED)             rc_final =  0;
     if (status_ctx->devices_status == STATUS_ERROR)               rc_final = -1;
+  }
+
+  // special case for --stdout
+
+  if (user_options->stdout_flag == true)
+  {
+    if (status_ctx->devices_status == STATUS_EXHAUSTED)
+    {
+      rc_final = 0;
+    }
   }
 
   // done
@@ -1265,7 +1275,7 @@ int hashcat_session_destroy (hashcat_ctx_t *hashcat_ctx)
 
   if (user_options->brain_client == true)
   {
-    WSACleanup();
+    WSACleanup ();
   }
   #endif
   #endif

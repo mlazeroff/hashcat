@@ -95,12 +95,12 @@ u32 brain_compute_session (hashcat_ctx_t *hashcat_ctx)
   else
   {
     // using hash_encode is an easy workaround for dealing with optimizations
-    // like OPTI_TYPE_PRECOMPUTE_MERKLE which cause diffrent hashes in digests_buf
+    // like OPTI_TYPE_PRECOMPUTE_MERKLE which cause different hashes in digests_buf
     // in case -O is used
 
-    char **out_bufs = (char **) hccalloc (hashes->digests_cnt, sizeof (char *));
+    string_sized_t *string_sized_buf = (string_sized_t *) hccalloc (hashes->digests_cnt, sizeof (string_sized_t));
 
-    int out_idx = 0;
+    int string_sized_cnt = 0;
 
     u8 *out_buf = (u8 *) hcmalloc (HCBUFSIZ_LARGE);
 
@@ -114,26 +114,27 @@ u32 brain_compute_session (hashcat_ctx_t *hashcat_ctx)
       {
         const int out_len = hash_encode (hashcat_ctx->hashconfig, hashcat_ctx->hashes, hashcat_ctx->module_ctx, (char *) out_buf, HCBUFSIZ_LARGE, salts_idx, digest_idx);
 
-        out_buf[out_len] = 0;
+        string_sized_buf[string_sized_cnt].buf = (char *) hcmalloc (out_len + 1);
+        string_sized_buf[string_sized_cnt].len = out_len;
 
-        out_bufs[out_idx] = hcstrdup ((char *) out_buf);
+        memcpy (string_sized_buf[string_sized_cnt].buf, out_buf, out_len);
+
+        string_sized_cnt++;
       }
     }
 
     hcfree (out_buf);
 
-    qsort (out_bufs, out_idx, sizeof (char *), sort_by_string);
+    qsort (string_sized_buf, string_sized_cnt, sizeof (string_sized_t), sort_by_string_sized);
 
-    for (int i = 0; i <= out_idx; i++)
+    for (int i = 0; i < string_sized_cnt; i++)
     {
-      const size_t out_len = strlen (out_bufs[out_idx]);
+      XXH64_update (state, string_sized_buf[i].buf, string_sized_buf[i].len);
 
-      XXH64_update (state, out_bufs[out_idx], out_len);
-
-      hcfree (out_bufs[out_idx]);
+      hcfree (string_sized_buf[i].buf);
     }
 
-    hcfree (out_bufs);
+    hcfree (string_sized_buf);
   }
 
   const u32 session = (const u32) XXH64_digest (state);
@@ -1485,12 +1486,14 @@ bool brain_server_read_hash_dumps (brain_server_dbs_t *brain_server_dbs, const c
 {
   brain_server_dbs->hash_cnt = 0;
 
+  /* temporary disabled due to https://github.com/hashcat/hashcat/issues/2379
   if (chdir (path) == -1)
   {
     brain_logging (stderr, 0, "%s: %s\n", path, strerror (errno));
 
     return false;
   }
+  */
 
   DIR *dirp = opendir (path);
 
@@ -1682,12 +1685,14 @@ bool brain_server_read_attack_dumps (brain_server_dbs_t *brain_server_dbs, const
 {
   brain_server_dbs->attack_cnt = 0;
 
+  /* temporary disabled due to https://github.com/hashcat/hashcat/issues/2379
   if (chdir (path) == -1)
   {
     brain_logging (stderr, 0, "%s: %s\n", path, strerror (errno));
 
     return false;
   }
+  */
 
   DIR *dirp = opendir (path);
 

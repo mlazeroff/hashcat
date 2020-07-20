@@ -428,6 +428,7 @@ typedef enum opts_type
   OPTS_TYPE_COPY_TMPS         = (1ULL << 46), // if we want to use data from tmps buffer (for example get the PMK in WPA)
   OPTS_TYPE_POTFILE_NOPASS    = (1ULL << 47), // sometimes the password should not be printed to potfile
   OPTS_TYPE_DYNAMIC_SHARED    = (1ULL << 48), // use dynamic shared memory (note: needs special kernel changes)
+  OPTS_TYPE_SELF_TEST_DISABLE = (1ULL << 49), // some algos use JiT in combinations with a salt or create too much startup time
 
 } opts_type_t;
 
@@ -534,6 +535,11 @@ typedef enum parser_rc
   PARSER_TOKEN_LENGTH         = -35,
   PARSER_INSUFFICIENT_ENTROPY = -36,
   PARSER_PKZIP_CT_UNMATCHED   = -37,
+  PARSER_KEY_SIZE             = -38,
+  PARSER_BLOCK_SIZE           = -39,
+  PARSER_CIPHER               = -40,
+  PARSER_FILE_SIZE            = -41,
+  PARSER_HAVE_ERRNO           = -100,
   PARSER_UNKNOWN_ERROR        = -255
 
 } parser_rc_t;
@@ -1624,6 +1630,13 @@ typedef struct cpu_set
 
 } cpu_set_t;
 #endif
+
+typedef struct
+{
+  char *buf;
+  int   len;
+
+} string_sized_t;
 
 /* AES context.  */
 typedef struct aes_context
