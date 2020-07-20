@@ -280,6 +280,11 @@ int hashconfig_init (hashcat_ctx_t *hashcat_ctx)
     }
   }
 
+  if (user_options->self_test_disable == true)
+  {
+    hashconfig->opts_type |= OPTS_TYPE_SELF_TEST_DISABLE;
+  }
+
   if (user_options->hex_charset)
   {
     hashconfig->opts_type |= OPTS_TYPE_PT_HEX;
@@ -349,7 +354,12 @@ int hashconfig_init (hashcat_ctx_t *hashcat_ctx)
       {
         if (hashconfig->has_optimized_kernel == false)
         {
-          if (user_options->quiet == false) event_log_warning (hashcat_ctx, "%s: Optimized kernel requested but not needed - falling back to pure kernel", source_file);
+          if (user_options->quiet == false)
+          {
+            event_log_warning (hashcat_ctx, "Kernel %s:", source_file);
+            event_log_warning (hashcat_ctx, "Optimized kernel requested but not needed - falling back to pure kernel");
+            event_log_warning (hashcat_ctx, NULL);
+          }
         }
         else
         {

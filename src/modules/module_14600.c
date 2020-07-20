@@ -23,10 +23,11 @@ static const u64   KERN_TYPE      = 14611; // this gets overwritten later instea
 static const u32   OPTI_TYPE      = OPTI_TYPE_ZERO_BYTE
                                   | OPTI_TYPE_SLOW_HASH_SIMD_LOOP;
 static const u64   OPTS_TYPE      = OPTS_TYPE_PT_GENERATE_LE
+                                  | OPTS_TYPE_SELF_TEST_DISABLE
                                   | OPTS_TYPE_BINARY_HASHFILE;
 static const u32   SALT_TYPE      = SALT_TYPE_EMBEDDED;
-static const char *ST_PASS        = "hashcat";
-static const char *ST_HASH        = NULL; // ST_HASH_14600  multi-hash-mode algorithm, unlikely to match self-test hash settings
+static const char *ST_PASS        = NULL;
+static const char *ST_HASH        = NULL;
 
 u32         module_attack_exec    (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSED const user_options_t *user_options, MAYBE_UNUSED const user_options_extra_t *user_options_extra) { return ATTACK_EXEC;     }
 u32         module_dgst_pos0      (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSED const user_options_t *user_options, MAYBE_UNUSED const user_options_extra_t *user_options_extra) { return DGST_POS0;       }
@@ -235,6 +236,7 @@ int module_hash_binary_parse (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE
   hash_t *hashes_buf = hashes->hashes_buf;
 
   int hashes_cnt = 0;
+  int last_error = 0;
 
   for (int keyslot_idx = 0; keyslot_idx < LUKS_NUMKEYS; keyslot_idx++)
   {
@@ -246,12 +248,23 @@ int module_hash_binary_parse (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE
 
     const int parser_status = module_hash_decode (hashconfig, hash->digest, hash->salt, hash->esalt, hash->hook_salt, hash->hash_info, hashes->hashfile, strlen (hashes->hashfile));
 
-    if (parser_status != PARSER_OK) continue;
+    if (parser_status != PARSER_OK)
+    {
+      last_error = parser_status;
+      continue;
+    }
 
     hashes_cnt++;
   }
 
-  return hashes_cnt;
+  if (hashes_cnt == 0)
+  {
+    return last_error;
+  }
+  else
+  {
+    return hashes_cnt;
+  }
 }
 
 u64 module_kern_type_dynamic (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSED const void *digest_buf, MAYBE_UNUSED const salt_t *salt, MAYBE_UNUSED const void *esalt_buf, MAYBE_UNUSED const void *hook_salt_buf, MAYBE_UNUSED const hashinfo_t *hash_info)
@@ -364,7 +377,7 @@ int module_hash_decode (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSE
 
   HCFILE fp;
 
-  if (hc_fopen (&fp, (const char *) line_buf, "rb") == false) return (PARSER_HASH_FILE);
+  if (hc_fopen (&fp, (const char *) line_buf, "rb") == false) return (PARSER_HAVE_ERRNO);
 
   struct luks_phdr hdr;
 
