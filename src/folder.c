@@ -14,6 +14,14 @@
 #include "event.h"
 #endif
 
+int sort_by_stringptr (const void *p1, const void *p2)
+{
+  const char* const *s1 = (const char* const *) p1;
+  const char* const *s2 = (const char* const *) p2;
+
+  return strcmp (*s1, *s2);
+}
+
 static int get_exec_path (char *exec_path, const size_t exec_path_sz)
 {
   #if defined (__linux__) || defined (__CYGWIN__)
@@ -258,7 +266,6 @@ int folder_config_init (hashcat_ctx_t *hashcat_ctx, MAYBE_UNUSED const char *ins
    * A workaround is to chdir() to the OpenCL folder,
    * then compile the kernels,
    * then chdir() back to where we came from so we need to save it first
-   * - temporary disabled due to https://github.com/hashcat/hashcat/issues/2379
    */
 
   char *cwd = (char *) hcmalloc (HCBUFSIZ_TINY);
@@ -451,7 +458,6 @@ int folder_config_init (hashcat_ctx_t *hashcat_ctx, MAYBE_UNUSED const char *ins
   hcfree (cpath);
 
   //if (getenv ("TMP") == NULL)
-  /* temporary disabled due to https://github.com/hashcat/hashcat/issues/2379
   if (true)
   {
     char *tmp;
@@ -460,7 +466,6 @@ int folder_config_init (hashcat_ctx_t *hashcat_ctx, MAYBE_UNUSED const char *ins
 
     putenv (tmp);
   }
-  */
 
   #if defined (_WIN)
 

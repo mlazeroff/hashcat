@@ -1,9 +1,4 @@
-#!/usr/bin/env perl
-
-##
-## Author......: See docs/credits.txt
-## License.....: MIT
-##
+#!/usr/bin/perl
 
 use strict;
 use warnings;

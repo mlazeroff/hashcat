@@ -6,7 +6,6 @@
 ##
 
 use strict;
-use warnings;
 
 use Authen::Passphrase::NTHash;
 use Digest::HMAC qw (hmac hmac_hex);

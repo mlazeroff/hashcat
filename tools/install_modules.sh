@@ -23,7 +23,6 @@ cpan install Authen::Passphrase::LANManager \
              Crypt::ECB                     \
              Crypt::Eksblowfish::Bcrypt     \
              Crypt::GCrypt                  \
-             Crypt::Mode::CBC               \
              Crypt::Mode::ECB               \
              Crypt::MySQL                   \
              Crypt::OpenSSH::ChachaPoly     \
@@ -51,13 +50,11 @@ cpan install Authen::Passphrase::LANManager \
              Digest::SHA1                   \
              Digest::SHA3                   \
              Digest::SipHash                \
-             Encode                         \
              JSON                           \
              MIME::Base32                   \
              MIME::Base64                   \
              Net::DNS::RR::NSEC3            \
              Net::DNS::SEC                  \
-             POSIX                          \
              Text::Iconv                    \
              ;
 
@@ -68,15 +65,6 @@ pip2 install pygost pycryptoplus
 pip2 uninstall -y pycryptodome
 
 ERRORS=$((ERRORS+$?))
-
-php --version > /dev/null 2> /dev/null
-
-if [ "$?" -ne 0 ]
-then
-  echo '[ ERROR ] php must be installed for some unit tests'
-
-  ERRORS=$((ERRORS+1))
-fi
 
 echo
 if [ $ERRORS -eq 0 ]; then

@@ -6,7 +6,6 @@
 ##
 
 use strict;
-use warnings;
 
 use Digest::SHA  qw (sha256);
 use MIME::Base64 qw (encode_base64);

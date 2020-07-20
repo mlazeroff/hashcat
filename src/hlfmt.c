@@ -374,7 +374,7 @@ u32 hlfmt_detect (hashcat_ctx_t *hashcat_ctx, HCFILE *fp, u32 max_check)
     hashlist_format = i;
   }
 
-  hcfree (formats_cnt);
+  free (formats_cnt);
 
   return hashlist_format;
 }

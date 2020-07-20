@@ -53,10 +53,6 @@ static const char *PA_034 = "Token encoding exception";
 static const char *PA_035 = "Token length exception";
 static const char *PA_036 = "Insufficient entropy exception";
 static const char *PA_037 = "Hash contains unsupported compression type for current mode";
-static const char *PA_038 = "Invalid key size";
-static const char *PA_039 = "Invalid block size";
-static const char *PA_040 = "Invalid or unsupported cipher";
-static const char *PA_041 = "Invalid filesize";
 static const char *PA_255 = "Unknown error";
 
 static const char *OPTI_STR_OPTIMIZED_KERNEL     = "Optimized-Kernel";
@@ -100,26 +96,6 @@ static const char *HASH_CATEGORY_PASSWORD_MANAGER_STR       = "Password Managers
 static const char *HASH_CATEGORY_OTP_STR                    = "One-Time Passwords";
 static const char *HASH_CATEGORY_PLAIN_STR                  = "Plaintext";
 static const char *HASH_CATEGORY_FRAMEWORK_STR              = "Framework";
-
-int sort_by_string_sized (const void *p1, const void *p2)
-{
-  string_sized_t *s1 = (string_sized_t *) p1;
-  string_sized_t *s2 = (string_sized_t *) p2;
-
-  const int d = s1->len - s2->len;
-
-  if (d != 0) return d;
-
-  return memcmp (s1->buf, s2->buf, s1->len);
-}
-
-int sort_by_stringptr (const void *p1, const void *p2)
-{
-  const char* const *s1 = (const char* const *) p1;
-  const char* const *s2 = (const char* const *) p2;
-
-  return strcmp (*s1, *s2);
-}
 
 static inline int get_msb32 (const u32 v)
 {
@@ -511,7 +487,7 @@ void setup_environment_variables (const folder_config_t *folder_config)
 
     putenv (display);
 
-    hcfree (display);
+    free (display);
   }
   else
   {
@@ -1026,10 +1002,6 @@ const char *strparser (const u32 parser_status)
     case PARSER_TOKEN_LENGTH:         return PA_035;
     case PARSER_INSUFFICIENT_ENTROPY: return PA_036;
     case PARSER_PKZIP_CT_UNMATCHED:   return PA_037;
-    case PARSER_KEY_SIZE:             return PA_038;
-    case PARSER_BLOCK_SIZE:           return PA_039;
-    case PARSER_CIPHER:               return PA_040;
-    case PARSER_FILE_SIZE:            return PA_041;
   }
 
   return PA_255;

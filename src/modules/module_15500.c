@@ -197,7 +197,9 @@ int module_hash_decode (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSE
 
   // alias
 
-  memcpy ((char *) jks_sha1->alias, (const char *) token.buf[6], token.len[6]);
+  const u8 *alias_pos = token.buf[6];
+
+  strncpy ((char *) jks_sha1->alias, (const char *) alias_pos, 64);
 
   // fake salt
 
@@ -235,10 +237,6 @@ int module_hash_encode (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSE
 
   u8 *der = (u8 *) jks_sha1->der;
 
-  char alias[65] = { 0 };
-
-  memcpy (alias, (char *) jks_sha1->alias, 64);
-
   const int line_len = snprintf (line_buf, line_size, "%s*%08X%08X%08X%08X%08X*%08X%08X%08X%08X%08X*%s*%02X*%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X*%s",
     SIGNATURE_JKS_SHA1,
     byte_swap_32 (jks_sha1->checksum[0]),
@@ -267,7 +265,7 @@ int module_hash_encode (MAYBE_UNUSED const hashconfig_t *hashconfig, MAYBE_UNUSE
     der[17],
     der[18],
     der[19],
-    alias
+    (char *) jks_sha1->alias
   );
 
   return line_len;

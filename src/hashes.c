@@ -27,6 +27,14 @@
 #include "brain.h"
 #endif
 
+int sort_by_string (const void *p1, const void *p2)
+{
+  const char *s1 = (const char *) p1;
+  const char *s2 = (const char *) p2;
+
+  return strcmp (s1, s2);
+}
+
 int sort_by_digest_p0p1 (const void *v1, const void *v2, void *v3)
 {
   const u32 *d1 = (const u32 *) v1;
@@ -182,8 +190,8 @@ int save_hash (hashcat_ctx_t *hashcat_ctx)
   {
     event_log_error (hashcat_ctx, "%s: %s", new_hashfile, strerror (errno));
 
-    hcfree (new_hashfile);
-    hcfree (old_hashfile);
+    free (new_hashfile);
+    free (old_hashfile);
 
     return -1;
   }
@@ -194,8 +202,8 @@ int save_hash (hashcat_ctx_t *hashcat_ctx)
 
     event_log_error (hashcat_ctx, "%s: %s", new_hashfile, strerror (errno));
 
-    hcfree (new_hashfile);
-    hcfree (old_hashfile);
+    free (new_hashfile);
+    free (old_hashfile);
 
     return -1;
   }
@@ -256,8 +264,8 @@ int save_hash (hashcat_ctx_t *hashcat_ctx)
 
     event_log_error (hashcat_ctx, "%s: %s", new_hashfile, strerror (errno));
 
-    hcfree (new_hashfile);
-    hcfree (old_hashfile);
+    free (new_hashfile);
+    free (old_hashfile);
 
     return -1;
   }
@@ -270,8 +278,8 @@ int save_hash (hashcat_ctx_t *hashcat_ctx)
   {
     event_log_error (hashcat_ctx, "Rename file '%s' to '%s': %s", hashfile, old_hashfile, strerror (errno));
 
-    hcfree (new_hashfile);
-    hcfree (old_hashfile);
+    free (new_hashfile);
+    free (old_hashfile);
 
     return -1;
   }
@@ -282,16 +290,16 @@ int save_hash (hashcat_ctx_t *hashcat_ctx)
   {
     event_log_error (hashcat_ctx, "Rename file '%s' to '%s': %s", new_hashfile, hashfile, strerror (errno));
 
-    hcfree (new_hashfile);
-    hcfree (old_hashfile);
+    free (new_hashfile);
+    free (old_hashfile);
 
     return -1;
   }
 
   unlink (old_hashfile);
 
-  hcfree (new_hashfile);
-  hcfree (old_hashfile);
+  free (new_hashfile);
+  free (old_hashfile);
 
   return 0;
 }
@@ -386,7 +394,7 @@ void check_hash (hashcat_ctx_t *hashcat_ctx, hc_device_param_t *device_param, pl
 
   tmp_buf[0] = 0;
 
-  const int tmp_len = outfile_write (hashcat_ctx, (char *) out_buf, out_len, plain_ptr, plain_len, crackpos, NULL, 0, true, (char *) tmp_buf);
+  const int tmp_len = outfile_write (hashcat_ctx, (char *) out_buf, out_len, plain_ptr, plain_len, crackpos, NULL, 0, (char *) tmp_buf);
 
   EVENT_DATA (EVENT_CRACKER_HASH_CRACKED, tmp_buf, tmp_len);
 
@@ -735,28 +743,21 @@ int hashes_init_stage1 (hashcat_ctx_t *hashcat_ctx)
       {
         const int binary_count = module_ctx->module_hash_binary_count (hashes);
 
-        if (binary_count > 0)
-        {
-          hashes_avail = binary_count;
-        }
-        else if (binary_count == 0)
+        if (binary_count == 0)
         {
           event_log_error (hashcat_ctx, "No hashes loaded.");
 
           return -1;
         }
-        else if (binary_count == PARSER_HAVE_ERRNO)
+
+        if (binary_count == -1)
         {
           event_log_error (hashcat_ctx, "%s: %s", hashes->hashfile, strerror (errno));
 
           return -1;
         }
-        else
-        {
-          event_log_error (hashcat_ctx, "%s: %s", hashes->hashfile, strerror (binary_count));
 
-          return -1;
-        }
+        hashes_avail = binary_count;
       }
       else
       {
@@ -1295,17 +1296,9 @@ int hashes_init_stage1 (hashcat_ctx_t *hashcat_ctx)
         {
           hashes_cnt = hashes_parsed;
         }
-        else if (hashes_parsed == 0)
-        {
-          event_log_warning (hashcat_ctx, "No hashes loaded.");
-        }
-        else if (hashes_parsed == PARSER_HAVE_ERRNO)
-        {
-          event_log_warning (hashcat_ctx, "Hashfile '%s': %s", hashes->hashfile, strerror (errno));
-        }
         else
         {
-          event_log_warning (hashcat_ctx, "Hashfile '%s': %s", hashes->hashfile, strparser (hashes_parsed));
+          event_log_warning (hashcat_ctx, "Hashfile '%s': %s", hashes->hashfile, strerror (errno));
         }
       }
       else

@@ -234,7 +234,6 @@ $1$2:
   expected_opencl: |
 
     bc
-    23456790abcdefghijklmnopqrstuvw
 
 ']':
   input: |
@@ -250,7 +249,6 @@ $1$2:
   expected_opencl: |
 
     ab
-    123456790abcdefghijklmnopqrstuv
 
 D3:
   input: |
@@ -269,7 +267,6 @@ D3:
     abc
     abc
     abce
-    12356790abcdefghijklmnopqrstuvw
 
 x14:
   input: |
@@ -291,7 +288,6 @@ x14:
     abc
     bcde
     bcde
-    2345
 
 O22:
   input: |
@@ -316,7 +312,6 @@ O22:
     abc
     ab
     abe
-    1256790abcdefghijklmnopqrstuvw
 
 O04:
   input: |
@@ -341,7 +336,6 @@ O04:
 
     e
     ef
-    56790abcdefghijklmnopqrstuvw
 
 i3!:
   input: |
@@ -447,7 +441,6 @@ saa:
     123b
 
     123b
-    123456790bcdefghijklmnopqrstuvw
 
 z0:
   input: |
@@ -856,13 +849,12 @@ y2:
     a
     abab
     ababc
-    12123456790abcdefghijklmnopqrstuv
 
   expected_opencl: |
     a
     abab
     ababc
-    12123456790abcdefghijklmnopqrstuv
+    123456790abcdefghijklmnopqrstuv
 
 Y2:
   input: |
@@ -875,13 +867,12 @@ Y2:
     a
     abab
     abcbc
-    123456790abcdefghijklmnopqrstuvuv
 
   expected_opencl: |
     a
     abab
     abcbc
-    123456790abcdefghijklmnopqrstuvuv
+    123456790abcdefghijklmnopqrstuv
 
 E:
   input: |
